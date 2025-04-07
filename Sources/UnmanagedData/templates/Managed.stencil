@@ -13,10 +13,18 @@ import CoreData
     }
 
     {% for attribute in entity.attributes %}
-    @NSManaged {{ accessModifier }} var {{ attribute.name }}: {{ attribute.managedType }}{% endfor %}
+    @NSManaged {{ accessModifier }} private(set) var {{ attribute.name }}: {{ attribute.managedType }}
+    var _{{ attribute.name }}: {{ attribute.managedType }} {
+        get { {{ attribute.name }} }
+        set { if isInserted || {{ attribute.name }} != newValue { {{ attribute.name }} = newValue } }
+    }{% endfor %}
     
     {% for attribute in entity.relationships %}
-    @NSManaged {{ accessModifier }} var {{ attribute.name }}: {{ attribute.managedType }}{% endfor %}
+    @NSManaged {{ accessModifier }} private(set) var {{ attribute.name }}: {{ attribute.managedType }}
+    var _{{ attribute.name }}: {{ attribute.managedType }} {
+        get { {{ attribute.name }} }
+        set { if isInserted || {{ attribute.name }} != newValue { {{ attribute.name }} = newValue } }
+    }{% endfor %}
     
     {% for attribute in entity.fetchedProperties %}
     {{ accessModifier }} var {{ attribute.name }}: {{ attribute.type }} {
